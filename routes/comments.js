@@ -7,7 +7,6 @@ var middleware = require("../middleware");
 //NEW
 router.get("/new", middleware.isLoggedIn,  function(req, res){
     Campground.findById(req.params.id, function(err, foundCampground){
-        console.log(req.params.id);
         if(err){
             console.log(err);
         } else {
