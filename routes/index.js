@@ -2,6 +2,7 @@ var express = require("express");
 var passport = require("passport");
 var router = express.Router();
 var User = require("../models/user");
+var Campground = require("../models/campground");
 
 router.get("/", function(req, res){
    res.render("landing"); 
@@ -16,7 +17,7 @@ router.get("/register", function(req, res){
 });
 
 router.post("/register", function(req, res){
-    var newUser = new User({username: req.body.username});
+    var newUser = new User({username: req.body.username, email: req.body.email});
     if(req.body.adminCode === process.env.ADMINCODE){
         newUser.isAdmin = true;
     }
@@ -52,12 +53,22 @@ router.get("/logout", function(req, res){
    res.redirect("/");
 });
 
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
+router.get("/users/:id", function(req, res){
+   User.findById(req.params.id, function(err, foundUser){
+       if(err){
+           req.flash("error", "User not found");
+           res.redirect("back");
+       }
+       Campground.find().where("author.id").equals(foundUser.id).exec(function(err, campgrounds){
+           if(err){
+           req.flash("error", "Campgrounds not found from user");
+           res.redirect("back");
+       }
+       res.render("users/show", {user: foundUser, campgrounds: campgrounds});
+       });
+       
+   }) 
+});
 
 
 module.exports = router;
