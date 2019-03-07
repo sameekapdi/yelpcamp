@@ -1,6 +1,9 @@
 body{
     background: lightgray;    
 }
+header{
+    margin :0;
+}
 .thumbnail img {
     width: 100%;
 }
