@@ -15,14 +15,33 @@ var geocoder = NodeGeocoder(options);
 
 
 // INDEX - 
-router.get("/", function(req,res){
-    Campground.find({}, function(err, allCampgrounds){
-        if(err){
-            console.log(err);
-        }else{
-            res.render("campgrounds/index", {campgrounds: allCampgrounds, page: "campgrounds"});
-        }
-    });
+router.get("/", function(req,res) {
+    var noMatch;
+    //fuzzy search
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Campground.find({name: regex}, function(err, allCampgrounds){
+            if(err){
+                console.log(err);
+            } else {
+                if(allCampgrounds.length < 1){
+                    noMatch = "Could not find a campground with that name";
+                } else {
+                    noMatch = "Search results";
+                }
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, page: "campgrounds", noMatch: noMatch});
+            }
+        });
+    } else { // render all campgrounds
+        Campground.find({}, function(err, allCampgrounds){
+            if(err){
+                console.log(err);
+            } else {
+                res.render("campgrounds/index", {campgrounds: allCampgrounds, page: "campgrounds", noMatch: noMatch});
+            }
+        });
+    }
+    
 });
 
 // NEW
@@ -121,6 +140,10 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res){
         }
     });
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 
 module.exports = router;

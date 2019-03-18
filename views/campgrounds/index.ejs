@@ -7,11 +7,24 @@
         <p>
             <a class="btn btn-primary btn-lg" href="/campgrounds/new">Add new campground</a>
         </p>
+        <p>
+            <form action="/campgrounds" method="GET" class="form-inline">
+                <div class="form-group">
+                    <input type="text" name="search" placeholder="Campground search" class="form-control">
+                    <input type="submit" value="Search" class="btn btn-default">
+                    
+                </div>
+            </form>
+        </p>
     </header>
 
-    <div class="row">
+    <div class="row text-center">
         <div class="col-lg-12" style="display:block;">
+            <% if(noMatch !== undefined) { %>
+                <h3> <%=  noMatch %> </h3>
+            <% } else { %>
             <h3>Our most popular campgrounds</h3>
+            <% } %>
         </div>
      
         <div class="row" style="flex-wrap: wrap; text-align:center;">
