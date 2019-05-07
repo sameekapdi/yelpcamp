@@ -19,6 +19,11 @@ header{
 .delete-form{
     display: inline;
 }
+.grid{
+    display: flex; 
+    flex-wrap: wrap;
+    text-align:center;
+}
 
 #map{
     height: 400px;
